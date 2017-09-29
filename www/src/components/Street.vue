@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <div id="street">
 
         <div id="map"></div>
 
-        <v-bottom-nav absolute value="true" class="grey darken-3 white--text bottom-toolbar">
-            <v-btn flat class="white--text btn">
+        <v-bottom-nav fixed value="true" class="grey darken-3 white--text bottom-toolbar">
+            <v-btn flat class="white--text btn" @click="resetMap()">
                 <span>reset</span>
                 <v-icon>loop</v-icon>
             </v-btn>
@@ -26,12 +26,12 @@
     export default {
         name: 'street',
         mounted() {
-            this.initMap();
         },
         data() {
             return {
                 query: '',
                 querySelector: '',
+                homeCoordinates: '',
                 poly: {},
                 map: {},
                 path: {},
@@ -59,13 +59,13 @@
             initMap() {
                 this.map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 18,
-                    center: { lat: 43.585564, lng: -116.317876 }
+                    center: this.$store.state.homeCoordinates
                 });
 
                 this.poly = new google.maps.Polyline({
-                    strokeColor: 'green',
+                    strokeColor: '#1976d2',
                     strokeOpacity: 1.0,
-                    strokeWeight: 3
+                    strokeWeight: 5
                 });
                 this.poly.setMap(this.map);
 
@@ -127,21 +127,30 @@
                 var map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 18,
                     center: { lat: 43.585564, lng: -116.317876 },
-                    mapTypeId: 'terrain'
+                    // mapTypeId: 'terrain'
                 });
 
                 var drawnPath = this.drawnPath
-                var flightPath = new google.maps.Polyline({
+                var plowRoute = new google.maps.Polyline({
                     path: drawnPath,
                     geodesic: true,
-                    strokeColor: 'green',
+                    strokeColor: '#1976d2',
                     strokeOpacity: 1.0,
                     strokeWeight: 5
                 });
 
-                flightPath.setMap(map);
+                plowRoute.setMap(map);
+            },
+            resetMap() {
+                this.poly = {}
+                this.map = {}
+                this.path = {}
+                this.drawnPath = []
+                this.position = {}
+                this.snapPath = {}
+                this.marker = {}
+                this.initMap();
             }
-
         }
     }
 
@@ -167,11 +176,14 @@
 
     .bottom-toolbar {
         left: 0;
+        bottom: 0;
     }
 
     #map {
-        height: 85vh !important;
+        height: 87vh !important;
         position: fixed;
+        top: 0;
+        width: 100%;
     }
 
     .zoomIn {

@@ -33,7 +33,7 @@
       <v-toolbar-title><strong>plaü</strong></v-toolbar-title><i class="material-icons">ac_unit</i>
     </v-toolbar>
     <main>
-      <v-container fluid>
+      <v-flex xs12>
 
 
 
@@ -41,7 +41,7 @@
 
 
 
-      </v-container>
+      </v-flex>
     </main>
   </v-app>
 </template>
@@ -56,7 +56,8 @@
       Settings
     },
     mounted() {
-      this.$store.dispatch('authenticate')
+      let street = this.$children[0].$children.find(c => c.$el.id == 'street');
+      this.$store.dispatch('authenticate', { cb: street.initMap })
     },
     computed: {
       loggedIn() {
@@ -90,8 +91,9 @@
     font-weight: 700 !important;
     color: #1976d2;
   }
+
   .toolbar-main {
-    background: rgba(0,0,0,0) !important;
+    background: rgba(0, 0, 0, 0) !important;
   }
 
   #app {
@@ -101,7 +103,7 @@
     -webkit-scrollbar-width: 0;
   }
 
-   #app::-webkit-scrollbar {
+  #app::-webkit-scrollbar {
     display: none;
   }
 </style>

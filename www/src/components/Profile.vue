@@ -93,7 +93,7 @@
   export default {
     name: 'profile',
     mounted() {
-      this.$store.dispatch('authenticate')
+      // this.$store.dispatch('authenticate')
       console.log(this.currentDate)
     },
     data() {

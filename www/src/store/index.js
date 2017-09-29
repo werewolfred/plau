@@ -28,6 +28,7 @@ let auth = axios.create({
 var store = new vuex.Store({
     state: {
         activeUser: {},
+        homeCoordinates: {},
         loggedIn: false,
         results: [],
         resultImgUrl: '',
@@ -36,11 +37,8 @@ var store = new vuex.Store({
     },
     mutations: {
         setUser(state, data) {
-            state.activeGames = data.gamesPlayed
-            state.activeWins = data.wins
             state.activeUser = data || {}
         },
-
         setLoggedIn(state, data) {
             state.loggedIn = data
         },
@@ -59,8 +57,8 @@ var store = new vuex.Store({
             state.results = []
             state.resultImgUrl = ''
         },
-        setUserSearchResults(state, data) {
-            state.userSearchResults = data.data.data
+        setHomeCoordinates(state, data) {
+            state.homeCoordinates = data
         }
     },
     actions: {
@@ -151,18 +149,25 @@ var store = new vuex.Store({
                 })
         },
 
-        authenticate({ commit, dispatch }) {
+        authenticate({ commit, dispatch }, { cb }) {
             auth('/authenticate')
                 .then(res => {
                     if (res.data.data._id) {
                         commit('setLoggedIn', true)
                         commit('setUser', res.data.data)
+                        $.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURI(res.data.data.streetAddress + ' ' + res.data.data.city + ' ' + res.data.data.continentalState + ' ' + res.data.data.zipCode) + '&key=AIzaSyC2eD55PQOzNL2reXI1I94cMtPPgYY81DA').then(res => {
+                            commit('setHomeCoordinates', res.results[0].geometry.location)
+                            if (cb)
+                                cb()
+                        })
                     } else {
+
                         commit('setLoggedIn', false)
                         console.log('No session found!')
                         router.push('/');
                     }
                 }).catch(err => {
+                    console.log(err)
                     commit('handleError', err)
                     commit('setLoggedIn', false)
                     router.push('/');
