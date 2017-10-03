@@ -59,9 +59,9 @@
     export default {
         name: 'street',
         mounted() {
-            if (!this.runOnce){
-                window.location.reload()
-            } else console.log('Window has already refreshed once.')
+            // if (!this.runOnce){
+            //     window.location.reload()
+            // } else console.log('Window has already refreshed once.')
         },
         data() {
             return {
