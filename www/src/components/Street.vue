@@ -59,6 +59,9 @@
     export default {
         name: 'street',
         mounted() {
+            if (!this.runOnce){
+                window.location.reload()
+            } else console.log('Window has already refreshed once.')
         },
         data() {
             return {
@@ -95,6 +98,9 @@
         computed: {
             activeUser() {
                 return this.$store.state.activeUser
+            },
+            runOnce() {
+                return this.$store.state.runOnce
             }
         },
         methods: {

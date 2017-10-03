@@ -33,7 +33,8 @@ var store = new vuex.Store({
         results: [],
         resultImgUrl: '',
         userSearchResults: [],
-        homeBounds: {}
+        homeBounds: {},
+        runOnce: false,
 
     },
     mutations: {
@@ -63,6 +64,9 @@ var store = new vuex.Store({
         },
         setHomeBounds(state, data) {
             state.homeBounds = data
+        },
+        runOnce(state, data) {
+            state.runOnce = data
         }
     },
     actions: {
@@ -169,6 +173,7 @@ var store = new vuex.Store({
                     if (res.data.data._id) {
                         commit('setLoggedIn', true)
                         commit('setUser', res.data.data)
+                        commit('runOnce', true)
                         $.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURI(res.data.data.streetAddress + ' ' + res.data.data.city + ' ' + res.data.data.continentalState + ' ' + res.data.data.zipCode) + '&key=AIzaSyC2eD55PQOzNL2reXI1I94cMtPPgYY81DA').then(res => {
                             commit('setHomeCoordinates', res.results[0].geometry.location)
                             console.log(res);
