@@ -59,7 +59,7 @@
     export default {
         name: 'street',
         mounted() {
-            Location.reload()
+            window.location.reload()
         },
         data() {
             return {
@@ -100,6 +100,7 @@
         },
         methods: {
             initMap() {
+                window.location.reload()
                 this.map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 18,
                     center: this.$store.state.homeCoordinates
