@@ -12,11 +12,44 @@
                 <span>draw path</span>
                 <v-icon>gesture</v-icon>
             </v-btn>
-            <v-btn flat class="white--text btn">
+            <v-btn flat class="white--text btn" @click="dialog = true">
                 <span>set bounty</span>
                 <v-icon>attach_money</v-icon>
             </v-btn>
         </v-bottom-nav>
+
+        
+            <v-dialog v-model="dialog"persistent width="90%">
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">set plaü bounty</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container grid-list-md>
+                            <v-layout wrap>
+                                <v-flex xs12>
+                                   <v-select label="Price $" autocomplete :items="['$5', '$10', '15', '$20', '$25', '$50', '$100', '$250' ]" v-model="newBounty.price"></v-select> 
+                                </v-flex>
+                                <v-flex xs12 sm6>
+                                    <v-select label="Method of Payment" required :items="['VISA ending in 0123 (On File)']" v-model="newBounty.methodOfPayment"></v-select>
+                                </v-flex>
+                                <v-flex xs12 sm6>
+                                    <v-select label="Fulfillment Time" autocomplete :items="['1-2 Hours **', '2-4 Hours **', '4-8 hours', '24-48 hours']" v-model="newBounty.fulfillmentTime"></v-select>
+                                </v-flex>
+                            </v-layout>
+                        </v-container>
+                        <small>*indicates required field</small>
+                    </br>
+                        <small>**some fulfillment times may be difficult to fulfill if plaü is in high demand. This may result in your bounty being unfulfilled.</small>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn class="blue--text darken-2" flat @click.native="dialog = false">Close</v-btn>
+                        <v-btn class="blue--text darken-2" flat @click.native="setBounty(newBounty)">Set Bounty</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        
 
     </div>
 </template>
@@ -26,6 +59,7 @@
     export default {
         name: 'street',
         mounted() {
+            this.initMap();
         },
         data() {
             return {
@@ -39,6 +73,15 @@
                 position: {},
                 snapPath: {},
                 marker: {},
+                dialog: false,
+                newBounty: {
+                    userId: '',
+                    initializationTime: '',
+                    price: '',
+                    fulfillmentTime: '',
+                    methodOfPayment: '',
+                    plowRoute: [],
+                },
                 markerIcon: {
                     url: 'https://i.imgur.com/wsCTnMr.png',
                     // This marker is 20 pixels wide by 32 pixels high.
@@ -116,7 +159,7 @@
                         this.path[i].lat = this.snapPath[i].location.latitude
                         this.path[i].lng = this.snapPath[i].location.longitude
                     }
-                    for (var i =0; i < Object.keys(this.path).length; i++) {
+                    for (var i = 0; i < Object.keys(this.path).length; i++) {
                         this.drawnPath.push(this.path[i])
                     }
                     console.log(this.drawnPath)
@@ -126,7 +169,7 @@
             drawSnappedPath() {
                 var map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 18,
-                    center: { lat: 43.585564, lng: -116.317876 },
+                    center: this.$store.state.homeCoordinates
                     // mapTypeId: 'terrain'
                 });
 
@@ -150,6 +193,18 @@
                 this.snapPath = {}
                 this.marker = {}
                 this.initMap();
+            },
+            setBounty(bounty) {
+                if (this.drawnPath.length > 0) {
+                    this.dialog = false
+                    bounty.userId = this.$store.state.activeUser._id
+                    bounty.initializationTime = Date.now()
+                    bounty.plowRoute = this.drawnPath
+                    console.log(bounty)
+                    this.$store.dispatch('setBounty', bounty)
+                } else {
+                    alert("Please indicate a path to plow before continuing!")
+                }
             }
         }
     }

@@ -15,9 +15,9 @@ const models = {
     useCustomRoutes: true
   },
 
-  gamestats: {
-    name: 'Gamestats',
-    endpoint: 'gamestats',
+  bounty: {
+    name: 'Bounty',
+    endpoint: 'bounties',
     preventDefaultApi: true,
     useCustomRoutes: true
   }

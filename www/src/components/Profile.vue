@@ -1,5 +1,6 @@
 <template>
   <div class="profile">
+    <v-layout container fluid>
     <v-layout row wrap>
       <v-flex v-if="loggedIn" xs12 sm5>
 
@@ -86,6 +87,7 @@
 
       </v-flex>
     </v-layout>
+  </v-layout>
   </div>
 </template>
 
@@ -93,8 +95,6 @@
   export default {
     name: 'profile',
     mounted() {
-      // this.$store.dispatch('authenticate')
-      console.log(this.currentDate)
     },
     data() {
       return {

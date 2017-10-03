@@ -32,7 +32,8 @@ var store = new vuex.Store({
         loggedIn: false,
         results: [],
         resultImgUrl: '',
-        userSearchResults: []
+        userSearchResults: [],
+        homeBounds: {}
 
     },
     mutations: {
@@ -59,6 +60,9 @@ var store = new vuex.Store({
         },
         setHomeCoordinates(state, data) {
             state.homeCoordinates = data
+        },
+        setHomeBounds(state, data) {
+            state.homeBounds = data
         }
     },
     actions: {
@@ -79,7 +83,16 @@ var store = new vuex.Store({
         setUser(data) {
             commit('setUser', data)
         },
-
+        setBounty({ commit, dispatch }, bounty) {
+            api.post('users/' + bounty.userId + '/bounties', bounty)
+                .then(res => {
+                    console.log('activeBounty', res)
+                    // dispatch('authenticate')
+                })
+                .catch(err => {
+                    commit('handleError', err)
+                })
+        },
         updateUser({ commit, dispatch }, user) {
             api.put('users/' + user._id, user)
                 .then(res => {
@@ -131,6 +144,7 @@ var store = new vuex.Store({
                 .then(res => {
                     commit('setUser', res.data.data)
                     commit('setLoggedIn', true)
+                    router.push('/street/')
                     if (!res.data.data) {
                         router.push('/Home');
                     }
@@ -157,6 +171,8 @@ var store = new vuex.Store({
                         commit('setUser', res.data.data)
                         $.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + encodeURI(res.data.data.streetAddress + ' ' + res.data.data.city + ' ' + res.data.data.continentalState + ' ' + res.data.data.zipCode) + '&key=AIzaSyC2eD55PQOzNL2reXI1I94cMtPPgYY81DA').then(res => {
                             commit('setHomeCoordinates', res.results[0].geometry.location)
+                            console.log(res);
+                            commit('setHomeBounds', res.results[0].geometry.bounds)
                             if (cb)
                                 cb()
                         })
