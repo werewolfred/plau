@@ -59,7 +59,7 @@
     export default {
         name: 'street',
         mounted() {
-            this.initMap();
+            Location.reload()
         },
         data() {
             return {
