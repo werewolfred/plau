@@ -59,7 +59,6 @@
     export default {
         name: 'street',
         mounted() {
-            window.location.reload()
         },
         data() {
             return {
