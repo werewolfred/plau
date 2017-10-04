@@ -61,7 +61,10 @@
         mounted() {
             // if (!this.runOnce){
             //     window.location.reload()
-            // } else console.log('Window has already refreshed once.')
+			// } else console.log('Window has already refreshed once.')
+			if (this.$store.state.activeUser._id) {
+				this.initMap();
+			}
         },
         data() {
             return {

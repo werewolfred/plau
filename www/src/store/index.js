@@ -131,27 +131,28 @@ var store = new vuex.Store({
         register({ commit, dispatch }, accountUser) {
             auth.post('register', accountUser)
                 .then(res => {
+                    if (!res.data.data._id) {
+						return router.push('/Home');
+					}
+					
                     commit('setUser', res.data.data)
                     commit('setLoggedIn', true)
-                    if (!res.data.data) {
-                        router.push('/Home');
-                    }
                 })
                 .catch(err => {
                     commit('handleError', err)
                 })
         },
 
-
         login({ commit, dispatch }, accountUser) {
             auth.post('login', accountUser)
                 .then(res => {
+					if (!res.data.data._id) {
+                        return router.push('/Home');
+                    }
+
                     commit('setUser', res.data.data)
                     commit('setLoggedIn', true)
                     router.push('/street/')
-                    if (!res.data.data) {
-                        router.push('/Home');
-                    }
                 })
                 .catch(err => {
                     commit('handleError', err)
@@ -161,13 +162,14 @@ var store = new vuex.Store({
         logout({ commit, dispatch }, credentials) {
             auth.delete('/logout')
                 .then(res => {
-                    commit('setLoggedIn', false)
+					commit('setLoggedIn', false)
+					router.push('/Home');
                 }).catch(err => {
                     commit('handleError', err)
                 })
         },
 
-        authenticate({ commit, dispatch }, { cb }) {
+        authenticate({ commit, dispatch }, cb) {
             auth('/authenticate')
                 .then(res => {
                     if (res.data.data._id) {
@@ -182,7 +184,6 @@ var store = new vuex.Store({
                                 cb()
                         })
                     } else {
-
                         commit('setLoggedIn', false)
                         console.log('No session found!')
                         router.push('/');
